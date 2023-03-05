@@ -196,7 +196,11 @@ def signup(request):
         password = request.POST['password']
         password2 = request.POST['password2']
 
-        if password == password2:
+        if username == '' or email == '' or password == '' or password2 == '':
+            messages.info(request, 'Please fill all the fields')
+            return redirect('signup')
+
+        elif password == password2:
             if User.objects.filter(email=email).exists():
                 messages.info(request, 'Email Taken')
                 return redirect('signup')
@@ -216,12 +220,14 @@ def signup(request):
                 new_profile = Profile.objects.create(user=user_model, id_user=user_model.id)
                 new_profile.save()
                 return redirect('settings')
+        
         else:
             messages.info(request, 'Password Not Matching')
             return redirect('signup')
         
     else:
         return render(request, 'signup.html')
+
 
 def signin(request):
     
@@ -245,3 +251,4 @@ def signin(request):
 def logout(request):
     auth.logout(request)
     return redirect('signin')
+    
